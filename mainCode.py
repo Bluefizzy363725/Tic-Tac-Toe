@@ -17,9 +17,12 @@ Update 2: 08/11/2024
 - Code formatted better
 - Easy and difficult option between the two CPU AIs
 
+Update 3 (final planned): 08/11/2024
+- Minor syntax changes
+
 To add:
 - More to the strategy?
-- Improvements to the UI (cleaning it up)
+- Improvements to the UI? (cleaning it up)
 
 """
 
@@ -360,7 +363,7 @@ choice = ''
 compChoice = ''
 ai = ''
 aiTrue = False
-playF = False
+playF = True
 player = False
 
 
@@ -381,7 +384,7 @@ else:
         if ai == 'Y':
             aiTrue = True
         x = random.randint(1,2)
-        if x == 1: playF = True
+        if x == 1: playF = False
 
 
 # RUNNING GAME
