@@ -4,7 +4,7 @@
 
 Written: Bluefizzy363725
 Date started: 26/10/2024
-Status: Incomplete
+Status: Complete
 
 Update 1: 07/11/2024
 - Added computer smart moving
@@ -17,12 +17,13 @@ Update 2: 08/11/2024
 - Code formatted better
 - Easy and difficult option between the two CPU AIs
 
-Update 3 (final planned): 08/11/2024
+Update 3: 08/11/2024
 - Minor syntax changes
 
-To add:
-- More to the strategy?
-- Improvements to the UI? (cleaning it up)
+Update 4: 10/11/2024
+- Edits regarding strategies
+- Fixed minor logic and syntax errors
+- Added draw screen
 
 """
 
@@ -45,10 +46,11 @@ class code:
 
     # INITIALISATION
 
-    def __init__(self,choice,compChoice,player):
+    def __init__(self,choice,compChoice,player,runLis):
         self.choice = choice
         self.compChoice = compChoice
         self.player = player
+        self.runLis = runLis
 
 
     # USER INPUT HANDLING
@@ -122,8 +124,10 @@ class code:
 
             # SOME STRATEGY
 
+            # IF CPU GOES FIRST - FIRST GO
+
             if runLis[0] == 1:
-                spin = random.randint(1,4)
+                spin = random.randint(1,6)
                 if spin == 1:
                     side = random.randint(1,4)
                     match side:
@@ -154,6 +158,58 @@ class code:
                     spaceLis[4] = compChoice
                     loop = False
                 runLis[0] = 0
+
+
+            # IF CPU GOES SECOND - FIRST GO
+
+            elif runLis[0] == 2:
+                if 5 in spaceLis:
+                    spaceLis[4] = compChoice
+                    runLis[0] = 0
+                    loop = False
+                else:
+                    x = random.randint(1,4)
+                    match x:
+                        case 1:
+                            spaceLis[0] = compChoice
+                            runLis[0] = 0
+                            loop = False
+                        case 2:
+                            spaceLis[2] = compChoice
+                            runLis[0] = 0
+                            loop = False
+                        case 3:
+                            spaceLis[6] = compChoice
+                            runLis[0] = 0
+                            loop = False
+                        case 4:
+                            spaceLis[8] = compChoice
+                            runLis[0] = 0
+                            loop = False                   
+
+
+            # TO COMBAT SOME SCENARIOS
+
+            elif (spaceLis == [1, choice, 3, choice, compChoice, compChoice, 7, 8, 9]) or (spaceLis == [1, 2, choice, 4, choice, 6, compChoice, 8, 9]) or (spaceLis == [1, 2, compChoice, 4, compChoice, 6, choice, 8, 9]) or (spaceLis == [1, 2, choice, choice, compChoice, 6, 7, 8, 9]):
+                if 1 in spaceLis:
+                    spaceLis[0] = compChoice
+                    loop = False
+            elif (spaceLis == [1, choice, 3, 4, compChoice, choice, 7, compChoice, 9]) or (spaceLis == [choice, 2, 3, 4, choice, 6, 7, 8, compChoice]) or (spaceLis == [compChoice, 2, 3, 4, compChoice, 6, 7, 8, choice]) or (spaceLis == [1, choice, 3, 4, compChoice, 6, 7, 8, choice]):
+                if 3 in spaceLis:
+                    spaceLis[2] = compChoice
+                    loop = False
+            elif (spaceLis == [1, 2, 3, compChoice, compChoice, choice, 7, choice, 9]) or (spaceLis == [1, 2, compChoice, 4, choice, 6, choice, 8, 9]) or (spaceLis == [1, 2, choice, 4, compChoice, 6, compChoice, 8, 9]) or (spaceLis == [1, 2, 3, 4, compChoice, choice, choice, 8, 9]):
+                if 9 in spaceLis:
+                    spaceLis[8] = compChoice
+                    loop = False
+            elif (spaceLis == [1, compChoice, 3, choice, compChoice, 6, 7, choice, 9]) or (spaceLis == [compChoice, 2, 3, 4, choice, 6, 7, 8, choice]) or (spaceLis == [choice, 2, 3, 4, compChoice, 6, 7, 8, compChoice]) or (spaceLis == [choice, 2, 3, 4, compChoice, 6, 7, choice, 9]):
+                if 7 in spaceLis:
+                    spaceLis[6] = compChoice
+                    loop = False
+
+
+            # BASIC LOGIC
+
             else:
 
 
@@ -303,6 +359,26 @@ class code:
                         loop = False
 
 
+                # SOME MORE STRATEGY
+
+                elif (spaceLis[2] == choice and spaceLis[6] == choice and spaceLis[4] == compChoice) or (spaceLis[8] == choice and spaceLis[0] == choice and spaceLis[4] == compChoice):
+                    x = random.randint(1,4)
+                    match x:
+                        case 1:
+                            if 2 in spaceLis:
+                                spaceLis[1] = compChoice
+                        case 2:
+                            if 4 in spaceLis:
+                                spaceLis[3] = compChoice
+                        case 3:
+                            if 6 in spaceLis:
+                                spaceLis[5] = compChoice
+                        case 4:
+                            if 8 in spaceLis:
+                                spaceLis[7] = compChoice
+                    loop = False
+
+
                 # RANDOM IF NO CONDITIONS ARE MET
 
                 else:
@@ -359,6 +435,7 @@ runLis = [1]
 # VARIABLES
 
 x = 0
+run = True
 choice = ''
 compChoice = ''
 ai = ''
@@ -384,52 +461,64 @@ else:
         if ai == 'Y':
             aiTrue = True
         x = random.randint(1,2)
-        if x == 1: playF = False
+        if x == 1:
+            playF = False
+        else:
+            runLis[0] = 2
 
 
 # RUNNING GAME
 
-runC = code(choice,compChoice,player)
-for i in range(9):
-        if playF == True:
+runC = code(choice,compChoice,player,runLis)
+
+while run == True:
+    if 1 in spaceLis or 2 in spaceLis or 3 in spaceLis or 4 in spaceLis or 5 in spaceLis or 6 in spaceLis or 7 in spaceLis or 8 in spaceLis or 9 in spaceLis:
+        pass
+    else:
+        os.system('cls')
+        print('DRAW')
+        time.sleep(1)
+        print(f'FINAL BOARD:\n {spaceLis[0]} | {spaceLis[1]} | {spaceLis[2]} \n-----------\n {spaceLis[3]} | {spaceLis[4]} | {spaceLis[5]} \n-----------\n {spaceLis[6]} | {spaceLis[7]} | {spaceLis[8]} ')
+        sys.exit(0)
+    if playF == True:
 
 
-            # PLAYER TURN
+                # PLAYER TURN
 
-            runC.playerChoice()
-            runC.winningPatternsPlayer()
-            playF = False
-        else:
-            if player == True:
-
-
-                # PLAYER 2 TURN
-
-                runC.player2Choice()
-                runC.winningPatternsComp()
-
-            elif aiTrue == True:
+                runC.playerChoice()
+                runC.winningPatternsPlayer()
+                playF = False
+    else:
+                if player == True:
 
 
-                # ADVANCED AI TURN
+                    # PLAYER 2 TURN
 
-                runC.computerChoiceAi()
-                runC.winningPatternsComp()
+                    runC.player2Choice()
+                    runC.winningPatternsComp()
 
-            else:
-
-
-                # PRIMITIVE AI TURN
-
-                runC.computerChoice()
-                runC.winningPatternsComp()
-
-            playF = True
+                elif aiTrue == True:
 
 
-        # GAMEPLAY LOG
+                    # ADVANCED AI TURN
 
-        f.write(f'{str(spaceLis)}\n')
+                    runC.computerChoiceAi()
+                    runC.winningPatternsComp()
+
+                else:
+
+
+                    # PRIMITIVE AI TURN
+
+                    runC.computerChoice()
+                    runC.winningPatternsComp()
+
+                playF = True
+
+
+            # GAMEPLAY LOG
+
+    f.write(f'{str(spaceLis)}\n')
 
 
 # CLOSING LOG
